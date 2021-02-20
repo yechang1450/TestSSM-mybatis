@@ -1,0 +1,101 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Login</title>
+    <link rel="icon" href="/static/ico/favicon.ico">
+    <link rel="stylesheet" href="../../static/css/style.css" type="text/css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>//@Author YECHANG1450</script>
+</head>
+<body class="body_bg" onload="CheckSession()">
+<div id="All">
+    <div id="main">
+        <div class="whole">
+            <div class="title">Please Login</div>
+            <div class="input_tit">Your Account</div>
+            <div class="input_box">
+                <input class="input_self" type="text" id="acc" value=""/>
+            </div>
+            <div class="blank_30"></div>
+            <div class="input_tit">Password</div>
+            <div class="input_box">
+                <input class="input_self" type="password" id="pwd" value=""/>
+            </div>
+            <div class="finish_box" id="return">
+                <input class="finish_btn" type="button" value="Login" onclick="LoginByAcc()"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function LoginByAcc() {
+        var acc = $("#acc").val();
+        var pwd = $("#pwd").val();
+        if (acc.length < 1) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">Error! Account is Empty!<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("loginbutton()", 999);
+        } else if (pwd.length < 1) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">Error! Password is Empty!<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("loginbutton()", 999);
+        } else {
+            $.ajax({
+                type: "get",
+                url: "/selectByName/acc=" + acc + "",
+                cache: false,
+                async: false,
+                success: function (data) {
+                    if (data.passWord == pwd) {
+                        ////登录成功//////登录成功/////////登录成功//////登录成功//////登录成功//////登录成功//////登录成功///////
+                        var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">Login Success!<br/></div>';
+                        $("#return").empty().append(html);
+                        if (data.realName == "admin") {
+                            window.location.href = '/admin';
+                        } else {
+                            setSession(acc);
+                            window.location.href = "/SessionUser";
+                        }
+                    } else {
+                        if (data.realName == "admin") {
+                            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">Error! Password is error!<br/></div>';
+                            $("#return").empty().append(html);
+                            setTimeout("loginbutton()", 999);
+                        } else {
+                            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">Error! Password is error!<br/></div>';
+                            $("#return").empty().append(html);
+                            setTimeout("loginbutton()", 999);
+                        }
+                    }
+                },
+                error: function () {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">Error! Account Can not Found!<br/></div>';
+                    $("#return").empty().append(html);
+                    setTimeout("loginbutton()", 999);
+                }
+            });
+        }
+    }
+
+    //////session//////session/////////session////////session/////////session///////session/////
+    function setSession(value) {
+        sessionStorage.setItem('username', value);
+    }
+
+    function CheckSession() {
+        var user = sessionStorage.getItem('username');
+        if (user != null) {
+            window.location.href = "/SessionUser";
+        }
+    }
+
+    //////session//////session/////////session////////session/////////session///////session/////
+    function loginbutton() {
+        var html = '<div class="finish_box" id="return" style="width:100%;margin-left:0;">';
+        html += '<input class="finish_btn" type="button" value="Login" onclick="LoginByAcc()"/>';
+        html += '</div>';
+        $("#return").empty().append(html);
+    }
+</script>
+</html>

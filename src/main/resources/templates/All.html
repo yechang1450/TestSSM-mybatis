@@ -1,0 +1,167 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <link rel="icon" href="/static/ico/favicon.ico">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+    <script type="text/javascript" src="../static/js/jquery.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/layui/layui.js" charset="utf-8"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<form class="layui-form" action="" id="addForm" style="display:none">
+    <div class="layui-form-item">
+        <label class="layui-form-label">型号</label>
+        <div class="layui-input-block">
+            <input type="text" id="model" required lay-verify="required" placeholder="请输入账号" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排量</label>
+        <div class="layui-input-inline">
+            <input type="text" id="displacement" required lay-verify="required" placeholder="排量" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">购买时间</label>
+        <div class="layui-input-inline">
+            <input type="text" id="produceYear" required lay-verify="required" placeholder="购买时间" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户</label>
+        <div class="layui-input-inline">
+            <input type="text" id="user" required lay-verify="required" placeholder="用户" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="adds()">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button type="button" class="layui-btn layui-btn-sm" id="add" lay-event="add">添加</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+
+    layui.use('table', function () {
+
+
+        var table = layui.table;
+
+        var pagecount;
+        page();
+
+        function page() {
+
+
+        }
+
+        table.render({
+            elem: '#test'
+            , url: '/selectAll' //改成我们使用的servlet
+            , method: "get"
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , title: '用户数据表'
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: '用户id', width: 170, fixed: 'left', unresize: true}
+                    , {field: 'userName', title: '用户名', width: 280, edit: 'text'}
+                    , {field: 'passWord', title: '密码', width: 280, edit: 'text'}
+                    , {field: 'realName', title: '身份', width: 200, edit: 'text'}
+                    , {field: 'tel', title: '电话', width: 240, edit: 'text'}
+                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 130}
+                ]
+            ]
+            , page: true
+
+            , response: {
+                statusName: 'status'
+                , dataName: 'rows'
+            }
+            , parseData: function (res) {
+                console.log(res)
+                return {
+                    "status": res[0].status,
+                    "message": res[1].message,
+                    "count": 1000,
+                    "rows": res[3].rows.item
+                };
+            }
+
+        });
+
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'add':
+                    add();
+                    break;
+            }
+            ;
+        });
+
+        function add() {
+            //让添加框弹出来
+            layer_index = layer.open({
+
+                type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: "添加房间", //数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+                area: ['400px', '400px'], //所打开页面大小
+                content: $("#addForm"), //内容
+                cancel: function () {
+
+
+                    layer.close(layer_index);
+                    $("#addForm")[0].reset();
+                }
+
+            });
+        }
+
+        //让添加框弹出来
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            console.log(obj)
+            upid = data.id;
+            console.log(upid);
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+
+
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

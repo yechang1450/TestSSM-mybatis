@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>user</title>
+    <link rel="icon" href="/static/ico/favicon.ico">
+    <link rel="stylesheet" href="../../static/css/style.css" type="text/css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body onload="CheckSession()">
+<div class="header-area">
+    <div class="dropdown">
+        <input type="button" class="dropbtn" id="user-login" value="登录"/>
+        <div class="dropdown-content" id="user-controller">
+            <a href="" id="user-center">个人中心</a>
+            <a href="" onclick="delSession()">切换账号</a>
+        </div>
+    </div>
+</div>
+<h1>自动获取session</h1>
+</body>
+<script>
+    //////session//////session/////////session////////session/////////session///////session/////
+    function delSession() {
+        sessionStorage.removeItem('username');
+    }
+
+    function CheckSession() {
+        var user = sessionStorage.getItem('username');
+        if (user != null) {
+            document.getElementById("user-login").value = "欢迎~ " + user;
+            document.getElementById("user-center").href = "/SessionUser/" + user + "";
+        } else {
+            window.location.href = "/Session";
+        }
+    }
+
+    //////session//////session/////////session////////session/////////session///////session/////
+</script>
+</html>
